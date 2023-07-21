@@ -1,7 +1,5 @@
 package com.example.fooddelivery.UI;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.fooddelivery.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ForgetPassword extends AppCompatActivity {
     Dialog dialog;
     private MaterialButton btn_retry;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +32,12 @@ public class ForgetPassword extends AppCompatActivity {
         MaterialButton rest = findViewById(R.id.rest_pass);
         EditText editText = findViewById(R.id.textInputLayout);
 
-        if(!isConnected()){
-            dialog=new Dialog(this);
+        if (!isConnected()) {
+            dialog = new Dialog(this);
             dialog.setContentView(R.layout.internet_custom);
             dialog.getWindow().setBackgroundDrawableResource(
                     android.R.color.transparent);
-            btn_retry=dialog.findViewById(R.id.btn_retry);
+            btn_retry = dialog.findViewById(R.id.btn_retry);
             btn_retry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -66,11 +67,12 @@ public class ForgetPassword extends AppCompatActivity {
             }
         });
     }
-    private boolean isConnected(){
-        ConnectivityManager cm=(ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network=cm.getActiveNetworkInfo();
-        if(network==null||!network.isAvailable()||!network.isConnected()){
-            return  false;
+
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network = cm.getActiveNetworkInfo();
+        if (network == null || !network.isAvailable() || !network.isConnected()) {
+            return false;
         }
         return true;
     }

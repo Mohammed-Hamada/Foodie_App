@@ -1,7 +1,7 @@
 package com.example.fooddelivery.model;
 
 public class onBoarding {
-    private String title,description;
+    private String title, description;
     private int image;
 
     public onBoarding(String title, String description, int image) {

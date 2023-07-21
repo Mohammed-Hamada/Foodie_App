@@ -18,11 +18,12 @@ public class MyFragmentAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if(position==1){
+        if (position == 1) {
             return new SingUpFragment();
         }
         return new SignInFragment();
     }
+
     @Override
     public int getItemCount() {
         return 2;

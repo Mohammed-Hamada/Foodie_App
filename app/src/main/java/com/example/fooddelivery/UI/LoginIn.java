@@ -1,9 +1,5 @@
 package com.example.fooddelivery.UI;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +8,10 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.fooddelivery.Adapter.MyFragmentAdapter;
 import com.example.fooddelivery.R;
@@ -31,22 +31,22 @@ public class LoginIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_in);
 
-        tabLayout=findViewById(R.id.tab_layout);
-        viewPager=findViewById(R.id.view_pager);
-        tabLayout=findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Sign In"));
         tabLayout.addTab(tabLayout.newTab().setText("Sign Up"));
 
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        adapter=new MyFragmentAdapter(fragmentManager,getLifecycle());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        adapter = new MyFragmentAdapter(fragmentManager, getLifecycle());
         viewPager.setAdapter(adapter);
 
-        if(!isConnected()){
-            dialog=new Dialog(this);
+        if (!isConnected()) {
+            dialog = new Dialog(this);
             dialog.setContentView(R.layout.internet_custom);
             dialog.getWindow().setBackgroundDrawableResource(
                     android.R.color.transparent);
-            btn_retry=dialog.findViewById(R.id.btn_retry);
+            btn_retry = dialog.findViewById(R.id.btn_retry);
             btn_retry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -85,11 +85,11 @@ public class LoginIn extends AppCompatActivity {
     }
 
 
-    private boolean isConnected(){
-        ConnectivityManager cm=(ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network=cm.getActiveNetworkInfo();
-        if(network==null||!network.isAvailable()||!network.isConnected()){
-            return  false;
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network = cm.getActiveNetworkInfo();
+        if (network == null || !network.isAvailable() || !network.isConnected()) {
+            return false;
         }
         return true;
     }

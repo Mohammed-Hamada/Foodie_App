@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,12 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.fooddelivery.Adapter.OrderAdapter;
 import com.example.fooddelivery.R;
@@ -34,20 +33,27 @@ import java.util.ArrayList;
 
 public class ShopFragment extends Fragment {
 
+    private RecyclerView rec_order;
+    private TextView total;
+    public BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int totalBill = intent.getIntExtra("totalAmount", 0);
+            total.setText("Total is :" + "$" + totalBill);
+        }
+    };
+    private Button check;
+    private OrderAdapter adapter;
+    private ArrayList<Order> item;
+    private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_shop, container, false);
     }
-
-    private RecyclerView rec_order;
-    private TextView total;
-    private Button check;
-    private OrderAdapter adapter;
-    private ArrayList<Order> item;
-    private FirebaseFirestore firestore;
-    private FirebaseAuth auth;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -66,25 +72,18 @@ public class ShopFragment extends Fragment {
         firestore.collection("Cart")
                 .whereEqualTo("UidCart", auth.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot snapshot : task.getResult().getDocuments()) {
-                        String documentID = snapshot.getId();
-                        Order foodOrder = snapshot.toObject(Order.class);
-                        foodOrder.setDocumentID(documentID);
-                        item.add(foodOrder);
-                        adapter.notifyDataSetChanged();
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot snapshot : task.getResult().getDocuments()) {
+                                String documentID = snapshot.getId();
+                                Order foodOrder = snapshot.toObject(Order.class);
+                                foodOrder.setDocumentID(documentID);
+                                item.add(foodOrder);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     }
-    public BroadcastReceiver receiver=new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int totalBill=intent.getIntExtra("totalAmount",0);
-            total.setText("Total is :"+"$"+totalBill);
-        }
-    };
 }

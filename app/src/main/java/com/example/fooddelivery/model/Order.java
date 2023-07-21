@@ -1,20 +1,20 @@
 package com.example.fooddelivery.model;
 
 public class Order {
-     String Name;
-     String price;
-     String numberOrder;
-     int imageCart;
-     int total;
-     String documentID;
+    String Name;
+    String price;
+    String numberOrder;
+    int imageCart;
+    int total;
+    String documentID;
 
-    public Order(String name, String price, String numberOrder, int total,int imageCart,String documentID) {
+    public Order(String name, String price, String numberOrder, int total, int imageCart, String documentID) {
         Name = name;
         this.price = price;
         this.numberOrder = numberOrder;
         this.total = total;
-        this.imageCart=imageCart;
-        this.documentID=documentID;
+        this.imageCart = imageCart;
+        this.documentID = documentID;
     }
 
     public Order() {

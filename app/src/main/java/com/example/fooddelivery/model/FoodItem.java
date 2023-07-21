@@ -6,7 +6,7 @@ public class FoodItem implements Serializable {
     private String name;
     private int price;
     private int image;
-    private  int description;
+    private int description;
     private String time;
     private int calories;
     private String IdFood;
@@ -14,14 +14,14 @@ public class FoodItem implements Serializable {
     public FoodItem() {
     }
 
-    public FoodItem(String name, int price, int image, int description, String time, int calories,String IdFood) {
+    public FoodItem(String name, int price, int image, int description, String time, int calories, String IdFood) {
         this.name = name;
         this.price = price;
         this.image = image;
         this.description = description;
         this.time = time;
         this.calories = calories;
-        this.IdFood=IdFood;
+        this.IdFood = IdFood;
     }
 
     public String getName() {

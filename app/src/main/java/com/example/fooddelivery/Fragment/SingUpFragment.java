@@ -6,11 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.fooddelivery.R;
 import com.example.fooddelivery.UI.HomePage;
@@ -35,6 +34,13 @@ import java.util.HashMap;
 
 public class SingUpFragment extends Fragment {
 
+    ProgressDialog dialog;
+    private FirebaseFirestore firestore;
+    private DatabaseReference reference;
+    private FirebaseAuth firebaseAuth;
+    private EditText name, email, pass, mobile_number;
+    private MaterialButton btn_SignUp, btn_retry;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,88 +48,82 @@ public class SingUpFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_sing_up, container, false);
     }
 
-    ProgressDialog dialog;
-    private FirebaseFirestore firestore;
-    private DatabaseReference reference;
-    private FirebaseAuth firebaseAuth;
-    private EditText name,email,pass,mobile_number;
-    private  MaterialButton btn_SignUp,btn_retry;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        name=view.findViewById(R.id.edit_UserName);
-        email=view.findViewById(R.id.edit_Email);
-        pass=view.findViewById(R.id.edit_Password);
-        mobile_number=view.findViewById(R.id.edit_mobilePhone);
-        btn_SignUp=view.findViewById(R.id.btn_signUp);
-        firebaseAuth=FirebaseAuth.getInstance();
-        firestore=FirebaseFirestore.getInstance();
+        name = view.findViewById(R.id.edit_UserName);
+        email = view.findViewById(R.id.edit_Email);
+        pass = view.findViewById(R.id.edit_Password);
+        mobile_number = view.findViewById(R.id.edit_mobilePhone);
+        btn_SignUp = view.findViewById(R.id.btn_signUp);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
         btn_SignUp.setOnClickListener(view1 -> {
-            String username=name.getText().toString();
-            String email_address=email.getText().toString();
-            String password=pass.getText().toString();
-            String number=mobile_number.getText().toString();
+            String username = name.getText().toString();
+            String email_address = email.getText().toString();
+            String password = pass.getText().toString();
+            String number = mobile_number.getText().toString();
 
-            if(username.isEmpty()){
+            if (username.isEmpty()) {
                 name.setError("Username is required");
                 name.requestFocus();
-            }else if(email_address.isEmpty()){
+            } else if (email_address.isEmpty()) {
                 email.setError("Email is required");
                 email.requestFocus();
-            }else if (password.isEmpty()) {
+            } else if (password.isEmpty()) {
                 pass.setError("Password is required");
                 pass.requestFocus();
-            }else if (number.isEmpty()){
+            } else if (number.isEmpty()) {
                 mobile_number.setError("Mobile Number is required");
                 mobile_number.requestFocus();
-            }else{
+            } else {
                 firebaseAuth.createUserWithEmailAndPassword(email_address, password).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        dialog=new ProgressDialog(getContext());
+                        dialog = new ProgressDialog(getContext());
                         dialog.show();
                         dialog.setContentView(R.layout.progress_custom);
                         dialog.getWindow().setBackgroundDrawableResource(
                                 android.R.color.transparent);
-                        FirebaseUser user1 =firebaseAuth.getCurrentUser();
-                        if(user1 != null){
-                            String uid=user1.getUid();
-                            reference=FirebaseDatabase.getInstance().getReference().child("users").child(uid);
-                            HashMap<String,Object>data=new HashMap<>();
-                            data.put("uid",uid);
-                            data.put("username",username);
-                            data.put("email",email_address);
-                            data.put("password",password);
-                            data.put("number",number);
+                        FirebaseUser user1 = firebaseAuth.getCurrentUser();
+                        if (user1 != null) {
+                            String uid = user1.getUid();
+                            reference = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("uid", uid);
+                            data.put("username", username);
+                            data.put("email", email_address);
+                            data.put("password", password);
+                            data.put("number", number);
                             reference.setValue(data);
                             firestore.collection("users").add(data)
                                     .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentReference> task) {
-                                            Intent intent=new Intent(getContext(), HomePage.class);
+                                            Intent intent = new Intent(getContext(), HomePage.class);
                                             startActivity(intent);
                                         }
                                     });
-                                }
-                    } else{
-                        if (!isConnected()){
-                            dialog=new ProgressDialog(getContext());
+                        }
+                    } else {
+                        if (!isConnected()) {
+                            dialog = new ProgressDialog(getContext());
                             dialog.show();
                             dialog.setContentView(R.layout.internet_custom);
                             dialog.getWindow().setBackgroundDrawableResource(
                                     android.R.color.transparent);
-                            btn_retry=dialog.findViewById(R.id.btn_retry);
+                            btn_retry = dialog.findViewById(R.id.btn_retry);
                             btn_retry.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                                 }
                             });
-                        }else{
-                            LayoutInflater inflater=getLayoutInflater();
-                            View root=inflater.inflate(R.layout.custom_toast,(ViewGroup)view.findViewById(R.id.toastMassage) );
-                            Toast toast=new Toast(getContext());
-                            toast.setGravity(Gravity.BOTTOM,0,0);
+                        } else {
+                            LayoutInflater inflater = getLayoutInflater();
+                            View root = inflater.inflate(R.layout.custom_toast, (ViewGroup) view.findViewById(R.id.toastMassage));
+                            Toast toast = new Toast(getContext());
+                            toast.setGravity(Gravity.BOTTOM, 0, 0);
                             toast.setDuration(Toast.LENGTH_LONG);
                             toast.setView(root);
                             toast.show();
@@ -133,9 +133,10 @@ public class SingUpFragment extends Fragment {
             }
         });
     }
-    private boolean isConnected(){
-        ConnectivityManager cm=(ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo network=cm.getActiveNetworkInfo();
-        return network!=null;
+
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network = cm.getActiveNetworkInfo();
+        return network != null;
     }
 }
